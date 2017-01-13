@@ -1,3 +1,4 @@
 #ignore folders
 .vscode/
 bin/
+build/
