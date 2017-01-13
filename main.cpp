@@ -10,15 +10,6 @@ public:
 class DataTest {
 public:
 	U64 a,b,c,d,e;
-
-public:
-	void printData() {
-		printf("a = %d\n", a);
-		printf("b = %d\n", b);
-		printf("c = %d\n", c);
-		printf("d = %d\n", d);
-		printf("e = %d\n", e);
-	}
 };
 
 int main(int argc, char** argv) {
@@ -27,13 +18,17 @@ int main(int argc, char** argv) {
 	U64 _4MB = 1024 * 1024 * 4;
 	U64 _40MiB = 1024 * 1024 * 40;
 
-	Memallocator h(_2MB, _4MB);
+	U64 test = 200000;
+	printf("%d\n", test);
+
+	Memallocator h(_4MB, _4MB);
 
 	ExempleData** exPtr = h.allocate<ExempleData>();
 	ExempleData** exPtr2 = h.allocate<ExempleData>();
 	ExempleData** exPtr3 = h.allocate<ExempleData>();
 	
 	ExempleData* exPtr_ = *exPtr;
+	printf("FIRST PTR ADDRESS: %d\n",exPtr);
 	exPtr_->d = 3;
 	exPtr2[0]->d = 123;
 	(*exPtr3)->d = 98;
@@ -82,13 +77,18 @@ int main(int argc, char** argv) {
 	DataTest** exPtr11 = h.allocate<DataTest>();
 	h.defragment();
 
-	bool& bToDiscoverSize = h.allocateClass<bool>();
+	bool bToDiscoverSize = h.allocateClass<bool>();
+	
+	ExempleData& exRef = h.allocateClass<ExempleData>();
+	exRef.d = 75;
 	
 	h.printTilNext();
 
 	bToDiscoverSize = true;
 
 	(*exPtr2)->d = 67;
+
+	h.deallocate((void*)*exPtr2);
 
 	h.printTilNext();
 

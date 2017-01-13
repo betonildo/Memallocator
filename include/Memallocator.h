@@ -3,24 +3,25 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <cstdint>
+
+#include <Environment.h>
 
 #define IN_USE 255
 #define FREE 0x00
-#define OFFSET_TO_FREE_FLAG 2
-#define OFFSET_TO_STRUCTURE_SIZE_BYTE 1
-#define OFFSET_FROM_HEADER_OF_THE_STRUCTURE 2
+
 typedef unsigned char byte;
-typedef size_t U64;
 using namespace std;
+
+#ifdef ENVIRONMENT64
+#define U64 uint_fast64_t
+#else 
+#define U64 uint_fast32_t
+#endif
 /*
 NOTE: 	OFFSETs need a replacement on different ENDIANNESS for differents CPU. This is made for Intel only that is currently Little Endian.
 		The sign need to change to '+' on Big Endian architectures
 */
-
-struct HeapBlockHeader {
-	byte isBlockInUse;
-	byte blockSize;
-};
 
 class Memallocator {
 	
@@ -31,23 +32,29 @@ private:
 	byte** ptrToSpace;
 	U64 ptrToSpaceCurrentIndex;
 
+	struct HeapBlockHeader {
+		byte isBlockInUse;
+		byte blockSize;
+	};
 
 public:
 	Memallocator(U64 min, U64 Max);
 
 	template<class T>
-	T& allocateClass() {
+	inline T& allocateClass() {
 		T** pointerForClassBlock = this->allocate<T>();
-		return *pointerForClassBlock[0];
+		return **pointerForClassBlock;
 	}
 
 	template<class T>
-	T** allocate() {
+	inline T** allocate() {
 
 		
 		// set size and next free space and 
 		U64 structureSize = sizeof(T);
-		U64 sizeOfBlockHeader = sizeof(HeapBlockHeader);
+		U64 sizeOfBlockHeader = (U64)sizeof(HeapBlockHeader);
+
+		printf("Structure size: %d, Block Size: %d\n", structureSize, sizeOfBlockHeader);
 
 		HeapBlockHeader* heapBlockHeader = (HeapBlockHeader*)&heapSpace[nextFree];
 		heapBlockHeader->isBlockInUse = IN_USE;
@@ -69,17 +76,16 @@ public:
 		return (T**)&ptrToSpace[ptrToSpaceCurrentIndex++];
 	}
 
-	// void** allocate(U64 sizeInBytes) {
-
-	// } 
-
 	template<class T>
-	void deallocate(T* block) {
+	inline void deallocate(T* block) {
 		byte* bytePtrToFlagAreaOfFreeOrNotNextBytes = ((byte*)block - sizeof(HeapBlockHeader));
 		*bytePtrToFlagAreaOfFreeOrNotNextBytes = FREE;
 	}
 
-	
+	void deallocate(void* block) {
+		byte* bytePtrToFlagAreaOfFreeOrNotNextBytes = ((byte*)block - sizeof(HeapBlockHeader));
+		*bytePtrToFlagAreaOfFreeOrNotNextBytes = FREE;
+	}
 
 	inline void replaceMemoryPointersStartingAtDowning(byte* physicAddress, byte blockSize) {
 
