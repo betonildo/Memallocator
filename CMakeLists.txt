@@ -8,8 +8,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # include translation units
-set(TRANSLATION_UNITS src/Memallocator.cpp)
-set(INCLUDE_UNITS include/Memallocator.h include/Environment.h)
+set(TRANSLATION_UNITS 
+    src/Memallocator.cpp)
+    
+set(INCLUDE_UNITS 
+    include/Memallocator.h 
+    include/Environment.h 
+    include/EnvTypes.h)
 
 add_executable(Memallocator main.cpp "${TRANSLATION_UNITS}" "${INCLUDE_UNITS}")
 

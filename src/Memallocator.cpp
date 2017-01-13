@@ -63,6 +63,6 @@ void Memallocator::printTilNext() {
     printf("HEAP BLOCK:\n");   
     
     for(U64 i = 0; i < nextFree; i++) {
-        printf("Address: %d, %ld = %ld\n", &heapSpace[i], i, heapSpace[i]);
+        printf("Address: %p, %ld = %ld\n", &heapSpace[i], i, heapSpace[i]);
     }
 }

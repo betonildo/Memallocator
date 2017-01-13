@@ -3,21 +3,13 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <cstdint>
-
-#include <Environment.h>
+#include <EnvTypes.h>
 
 #define IN_USE 255
 #define FREE 0x00
 
-typedef unsigned char byte;
 using namespace std;
 
-#ifdef ENVIRONMENT64
-#define U64 uint_fast64_t
-#else 
-#define U64 uint_fast32_t
-#endif
 /*
 NOTE: 	OFFSETs need a replacement on different ENDIANNESS for differents CPU. This is made for Intel only that is currently Little Endian.
 		The sign need to change to '+' on Big Endian architectures

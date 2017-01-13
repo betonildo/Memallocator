@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 	ExempleData** exPtr3 = h.allocate<ExempleData>();
 	
 	ExempleData* exPtr_ = *exPtr;
-	printf("FIRST PTR ADDRESS: %d\n",exPtr);
+	printf("FIRST PTR ADDRESS: %p\n",exPtr);
 	exPtr_->d = 3;
 	exPtr2[0]->d = 123;
 	(*exPtr3)->d = 98;
@@ -72,23 +72,32 @@ int main(int argc, char** argv) {
 	h.deallocate<ExempleData>(*exPtr9);
 	h.deallocate<ExempleData>(*exPtr10);
 
-	h.printTilNext();
+	
 
-	DataTest** exPtr11 = h.allocate<DataTest>();
+	DataTest& exPtr11 = h.allocateClass<DataTest>();	
+	exPtr11.a = 168;
+
+	printf("before defrag exPtr11 address: %p, and a address = %d\n", &exPtr11, exPtr11.a);
+
+	h.printTilNext();
+	
 	h.defragment();
 
-	bool bToDiscoverSize = h.allocateClass<bool>();
+	printf("after defrag exPtr11 address: %p, and a address = %d\n", &exPtr11, exPtr11.a);
+
+	h.printTilNext();
+
+	
+	bool& bToDiscoverSize = h.allocateClass<bool>();
 	
 	ExempleData& exRef = h.allocateClass<ExempleData>();
 	exRef.d = 75;
-	
-	h.printTilNext();
 
 	bToDiscoverSize = true;
 
 	(*exPtr2)->d = 67;
 
-	h.deallocate((void*)*exPtr2);
+	h.deallocate(*exPtr2);
 
 	h.printTilNext();
 
