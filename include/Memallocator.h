@@ -41,9 +41,11 @@ public:
 	template<class T>
 	inline T** allocate() {
 
-		
-		// set size and next free space and 
-		U64 structureSize = sizeof(T);
+		// set size and next free space and
+		return (T**)allocate(sizeof(T));
+	}
+
+	inline byte** allocate(size_t structureSize) {
 		U64 sizeOfBlockHeader = (U64)sizeof(HeapBlockHeader);
 
 		printf("Structure size: %d, Block Size: %d\n", structureSize, sizeOfBlockHeader);
@@ -58,20 +60,20 @@ public:
 		// calculate next free block
 		nextFree += structureSize + sizeOfBlockHeader;
 		
-		return setPointerToSpaceAndReturnTypeCasted<T>(indexOfFreeAddress);
+		return setPointerToSpaceAndReturnTypeCasted(indexOfFreeAddress);
 	}
 
-	template<class T>
-	inline T** setPointerToSpaceAndReturnTypeCasted(U64& indexOfFreeAddress) {
+	inline byte** setPointerToSpaceAndReturnTypeCasted(U64& indexOfFreeAddress) {
 
 		ptrToSpace[ptrToSpaceCurrentIndex] = &heapSpace[indexOfFreeAddress];
-		return (T**)&ptrToSpace[ptrToSpaceCurrentIndex++];
+		return &ptrToSpace[ptrToSpaceCurrentIndex++];
 	}
 
 	template<class T>
 	inline void deallocate(T* block) {
 		byte* bytePtrToFlagAreaOfFreeOrNotNextBytes = ((byte*)block - sizeof(HeapBlockHeader));
 		*bytePtrToFlagAreaOfFreeOrNotNextBytes = FREE;
+		delete block;
 	}
 
 	void deallocate(void* block) {

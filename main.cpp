@@ -2,9 +2,21 @@
 #include <stdio.h>
 #include <Memallocator.h>
 
+U64 _4MB = 1024 * 1024 * 4;
+
+Memallocator h(_4MB, _4MB);
+
+
 class ExempleData {
 public:
 	byte d;
+
+	ExempleData() {
+	}
+
+	~ExempleData() {
+		printf("calling destructor of ExempleData @ %p\n", this);
+	}
 };
 
 class DataTest {
@@ -12,16 +24,11 @@ public:
 	U64 a,b,c,d,e;
 };
 
-int main(int argc, char** argv) {
-	
-	U64 _2MB = 1024 * 1024 * 2;
-	U64 _4MB = 1024 * 1024 * 4;
-	U64 _40MiB = 1024 * 1024 * 40;
+int main(int argc, char** argv) {	
 
 	U64 test = 200000;
 	printf("%d\n", test);
 
-	Memallocator h(_4MB, _4MB);
 
 	ExempleData** exPtr = h.allocate<ExempleData>();
 	ExempleData** exPtr2 = h.allocate<ExempleData>();
@@ -89,15 +96,14 @@ int main(int argc, char** argv) {
 
 	
 	bool& bToDiscoverSize = h.allocateClass<bool>();
-	
-	ExempleData& exRef = h.allocateClass<ExempleData>();
-	exRef.d = 75;
-
 	bToDiscoverSize = true;
-
-	(*exPtr2)->d = 67;
-
-	h.deallocate(*exPtr2);
+	
+	{
+		ExempleData& exRef = h.allocateClass<ExempleData>();
+		exRef.d = 75;
+		h.deallocate<ExempleData>(&exRef);
+		printf("?\n");
+	}	
 
 	h.printTilNext();
 
