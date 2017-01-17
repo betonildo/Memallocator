@@ -2,8 +2,6 @@
 #define ENVTYPES_H
 
 #include <Environment.h>
-#include <cstdint>
-
 
 typedef uint_fast8_t byte;
 
