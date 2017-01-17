@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <EnvTypes.h>
+#include <MemTypes.h>
 
 #define IN_USE 255
 #define FREE 0x00

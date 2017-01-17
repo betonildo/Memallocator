@@ -5,7 +5,8 @@ set (Memallocator_VERSION_MAJOR 1)
 set (Memallocator_VERSION_MINOR 0)
 
 # custom flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 ")
+option (COMPILE_TESTS "Compile all main.cpp files to test subprojects" OFF)
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s")  ## Strip binary
 
 #Add "include" folder to include into final build system
@@ -18,7 +19,12 @@ set(TRANSLATION_UNITS
 set(INCLUDE_UNITS 
     include/Memallocator.h 
     include/Environment.h 
-    include/EnvTypes.h)
+    include/MemTypes.h)
 
-add_executable(Memallocator main.cpp "${TRANSLATION_UNITS}" "${INCLUDE_UNITS}")
+if (COMPILE_TESTS)
+    set(TRANSLATION_UNITS "${TRANSLATION_UNITS}" main.cpp)
+    add_executable(Memallocator "${TRANSLATION_UNITS}" "${INCLUDE_UNITS}")
+endif(COMPILE_TESTS)
+
+
 
