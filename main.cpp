@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <Memallocator.h>
+#include <test/Array.h>
 
 U64 _4MB = 1024 * 1024 * 4;
 
@@ -104,6 +105,34 @@ int main(int argc, char** argv) {
 		h.deallocate<ExempleData>(&exRef);
 		printf("?\n");
 	}	
+
+	h.printTilNext();
+
+	ExempleData** arr = h.allocateArray<ExempleData>(10);
+	(*arr)[0].d = 1;
+	(*arr)[1].d = 2;
+	(*arr)[2].d = 3;
+	(*arr)[3].d = 4;
+	(*arr)[4].d = 5;
+	(*arr)[5].d = 6;
+	(*arr)[6].d = 7;
+	(*arr)[7].d = 8;
+	(*arr)[8].d = 9;
+	(*arr)[9].d = 10;
+
+	h.printTilNext();
+
+	h.defragment();
+
+	(*arr)[0].d = 99;
+
+	h.printTilNext();
+
+	// templated dependency injected
+	Array<ExempleData, &h> array(10);
+	array[0].d = 100;
+	array[1].d = 101;
+	array[2].d = 102;
 
 	h.printTilNext();
 

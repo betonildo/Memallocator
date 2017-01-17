@@ -39,6 +39,11 @@ public:
 	}
 
 	template<class T>
+	inline T** allocateArray(size_t count) {
+		return (T**)allocate(sizeof(T) * count);
+	}
+
+	template<class T>
 	inline T** allocate() {
 
 		// set size and next free space and

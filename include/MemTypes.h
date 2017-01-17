@@ -6,7 +6,7 @@
 #include <cstdint>
 
 #ifndef BYTE
-#define byte unsigned char
+typedef uint_fast8_t byte;
 #endif
 
 
