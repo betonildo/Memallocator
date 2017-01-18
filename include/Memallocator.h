@@ -1,9 +1,8 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#include <stdio.h>
-#include <string.h>
-#include <MemTypes.h>
+#include <Definitions.h>
+#include <CustomTypes.h>
 
 #define IN_USE 255
 #define FREE 0x00
