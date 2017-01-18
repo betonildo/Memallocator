@@ -1,12 +1,9 @@
 #include <Memallocator.h>
 
 Memallocator::Memallocator(U64 min, U64 Max) {
-    heapSpace = new byte[min];
-    ptrToSpace = new byte*[min];
     
-
-    for(U64 i = 0; i < min; i++)
-        ptrToSpace[i] = new byte[1];
+    heapSpace = new byte[min];
+    ptrToSpace = new byte*[min];    
 
     nextFree = 0;
     ptrToSpaceCurrentIndex = 0;
