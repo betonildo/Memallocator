@@ -13,7 +13,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 file(GLOB TRANSLATION_UNITS src/*.cpp)
 file(GLOB INCLUDE_UNITS include/*.h)
 
-# if (COMPILE_TESTS)
+# creates a executable
 set(TRANSLATION_UNITS "${TRANSLATION_UNITS}" main.cpp)
 add_executable(Memallocator "${TRANSLATION_UNITS}" "${INCLUDE_UNITS}")
 
