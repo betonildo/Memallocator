@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <Memallocator.h>
-#include <test/Array.h>
 
 U64 _4MB = 1024 * 1024 * 4;
 
@@ -128,13 +127,13 @@ int main(int argc, char** argv) {
 
 	h.printTilNext();
 
-	// templated dependency injected
-	Array<ExempleData, &h> array(10);
-	array[0].d = 100;
-	array[1].d = 101;
-	array[2].d = 102;
+	// // templated dependency injected
+	// Array<ExempleData, &h> array(10);
+	// array[0].d = 100;
+	// array[1].d = 101;
+	// array[2].d = 102;
 
-	h.printTilNext();
+	// h.printTilNext();
 
 	return 0;
 }
