@@ -5,6 +5,7 @@
 #include <CustomTypes.h>
 #include <CustomMacros.h>
 #include <Debug.h>
+#include <Allocator.h>
 
 #define IN_USE 255
 #define FREE 0x00
@@ -16,7 +17,7 @@ NOTE: 	OFFSETs need a replacement on different ENDIANNESS for differents CPU. Th
 		The sign need to change to '+' on Big Endian architectures
 */
 
-class Memallocator {
+class Memallocator : public Allocator {
 	
 private:
 	struct HeapBlockHeader {
@@ -55,7 +56,7 @@ public:
 		return (T**)allocate(sizeof(T));
 	}
 
-	inline byte** allocate(size_t structureSize) {
+	inline virtual byte** allocate(size_t structureSize) {
 
 		U64 sizeOfBlockHeader = (U64)sizeof(HeapBlockHeader);
 
@@ -86,7 +87,7 @@ public:
 		delete block;
 	}
 
-	void deallocate(void* block) {
+	virtual void deallocate(void* block) {
 		byte* bytePtrToFlagAreaOfFreeOrNotNextBytes = ((byte*)block - sizeof(HeapBlockHeader));
 		*bytePtrToFlagAreaOfFreeOrNotNextBytes = FREE;
 	}
@@ -101,7 +102,7 @@ public:
 	}
 
 	// NOT THREAD SAFE
-	void defragment();
+	virtual void defragment();
 	void printTilNext();
 };
 

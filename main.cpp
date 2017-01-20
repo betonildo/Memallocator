@@ -128,11 +128,12 @@ int main(int argc, char** argv) {
 
 	h.printTilNext();
 
-	// templated dependency injected
-	Array<ExempleData, Memallocator> array(10);
-	array[0].d = 100;
-	array[1].d = 101;
-	array[2].d = 102;
+	// // templated dependency injected
+	// Array<ExempleData> array(10, h);
+	// array.setAllocator(h);
+	// array[0].d = 100;
+	// array[1].d = 101;
+	// array[2].d = 102;
 
 	h.printTilNext();
 
