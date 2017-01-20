@@ -3,6 +3,8 @@
 
 #include <Definitions.h>
 #include <CustomTypes.h>
+#include <CustomMacros.h>
+#include <Debug.h>
 
 #define IN_USE 255
 #define FREE 0x00
@@ -17,18 +19,22 @@ NOTE: 	OFFSETs need a replacement on different ENDIANNESS for differents CPU. Th
 class Memallocator {
 	
 private:
-	byte* heapSpace;
-	U64 nextFree;
-
-	byte** ptrToSpace;
-	U64 ptrToSpaceCurrentIndex;
-
 	struct HeapBlockHeader {
-		byte isBlockInUse;
-		byte blockSize;
+		U64 isBlockInUse;
+		U64 blockSize;
 	};
 
 public:
+
+	static byte* heapSpace;
+	static U64 nextFree;
+
+	static byte** ptrToSpace;
+	static U64 ptrToSpaceCurrentIndex;
+
+	static bool wasInitialized;
+
+	Memallocator();
 	Memallocator(U64 min, U64 Max);
 
 	template<class T>
@@ -50,10 +56,10 @@ public:
 	}
 
 	inline byte** allocate(size_t structureSize) {
+
 		U64 sizeOfBlockHeader = (U64)sizeof(HeapBlockHeader);
 
-		printf("Structure size: %d, Block Size: %d\n", structureSize, sizeOfBlockHeader);
-
+		// fill block header
 		HeapBlockHeader* heapBlockHeader = (HeapBlockHeader*)&heapSpace[nextFree];
 		heapBlockHeader->isBlockInUse = IN_USE;
 		heapBlockHeader->blockSize = structureSize;

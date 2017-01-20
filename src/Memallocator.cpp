@@ -1,12 +1,38 @@
 #include <Memallocator.h>
 
+byte* Memallocator::heapSpace = NULL;
+U64 Memallocator::nextFree = 0;
+byte** Memallocator::ptrToSpace = NULL;
+U64 Memallocator::ptrToSpaceCurrentIndex = 0;
+bool Memallocator::wasInitialized = false;
+
+Memallocator::Memallocator() {
+    
+    if (!wasInitialized) {
+
+        const U64 _1MiB = 1024 * 1024 * 1;
+        
+        heapSpace = new byte[_1MiB];
+        ptrToSpace = new byte*[_1MiB];    
+
+        nextFree = 0;
+        ptrToSpaceCurrentIndex = 0;
+
+        wasInitialized = true;
+    }
+}
+
 Memallocator::Memallocator(U64 min, U64 Max) {
     
-    heapSpace = new byte[min];
-    ptrToSpace = new byte*[min];    
+    if (!wasInitialized) {
+        heapSpace = new byte[min];
+        ptrToSpace = new byte*[min];    
 
-    nextFree = 0;
-    ptrToSpaceCurrentIndex = 0;
+        nextFree = 0;
+        ptrToSpaceCurrentIndex = 0;
+
+        wasInitialized = true;
+    }
 }
 
 void Memallocator::defragment() {
