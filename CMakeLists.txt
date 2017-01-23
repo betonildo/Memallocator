@@ -15,7 +15,11 @@ file(GLOB TRANSLATION_UNITS src/*.cpp)
 file(GLOB INCLUDE_UNITS include/*.h)
 
 # creates a executable
-set(ALL_LOCAL_SOURCES "${TRANSLATION_UNITS}" main.cpp)
+set(ALL_LOCAL_SOURCES 
+    ${TRANSLATION_UNITS}
+    ${UnitDefinitions_INCLUDE_UNITS}
+    ${LTL_INCLUDE_UNITS} main.cpp)
+    
 add_executable(Memallocator "${ALL_LOCAL_SOURCES}" "${INCLUDE_UNITS}")
 
 # Include transiently it's own dependencies
@@ -27,4 +31,8 @@ set(${PROJECT_NAME}_INCLUDE_DIRS
 # Export Translation units
 set(${PROJECT_NAME}_TRANSLATION_UNITS
     ${TRANSLATION_UNITS}
+    CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
+
+set(${PROJECT_NAME}_INCLUDE_UNITS
+    ${INCLUDE_UNITS}
     CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
