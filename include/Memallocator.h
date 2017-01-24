@@ -81,6 +81,38 @@ public:
 	}
 
 	template<class T>
+	inline T** reallocate(T* structurePtr, size_t newStructureSize) {
+		return reinterpret_cast<T**>(reallocate(structurePtr, newStructureSize));
+	}
+
+	inline byte** reallocate(void* structurePtr, size_t newStructureSize) {
+		HeapBlockHeader* currBlockHeader = reinterpret_cast<HeapBlockHeader*>(structurePtr - sizeof(HeapBlockHeader));
+		HeapBlockHeader* nextBlockHeader = reinterpret_cast<HeapBlockHeader*>(structurePtr - heapBlockHeader->blockSize);
+
+		// TODO: find new ptrToPtrHeap
+		
+		// simplified approach
+		// if the pointer points to the last heap allocated, just increment the size in bytes
+		if (nextFree <= (heapSpace - currBlockHeader)) {
+			nextFree += newStructureSize - currBlockHeader->blockSize;
+			currBlockHeader->blockSize = newStructureSize;
+		}
+		// else, reserve new space at the end of the heap and copy bytes to there
+		else (nextBlockHeader->isBlockInUse == IN_USE) {
+			currBlockHeader->isBlockInUse = FREE;
+			byte** newPtr = allocate(newStructureSize);
+			memcpy(*newPtr, structurePtr, currBlockHeader->blockSize);
+			return newPtr;
+		}
+
+		// TODO: try to allocate memory from free spaces if the allocated is in the middle
+		// else
+		// }
+
+		return structurePtr
+	}
+
+	template<class T>
 	inline void deallocate(T* block) {
 		byte* bytePtrToFlagAreaOfFreeOrNotNextBytes = ((byte*)block - sizeof(HeapBlockHeader));
 		*bytePtrToFlagAreaOfFreeOrNotNextBytes = FREE;
@@ -99,7 +131,7 @@ public:
 			if (ptrToSpace[i] >= physicAddress)
 				ptrToSpace[i] -= blockSize;
 		}
-	}
+	}	
 
 	// NOT THREAD SAFE
 	virtual void defragment();
