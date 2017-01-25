@@ -1,7 +1,6 @@
-#include <iostream>
-#include <stdio.h>
+#include <Definitions.h>
 #include <Memallocator.h>
-//#include <Array.h>
+#include <StackAllocator.h>
 
 U64 _4MB = 1024 * 1024 * 4;
 
@@ -137,5 +136,36 @@ int main(int argc, char** argv) {
 
 	h.printTilNext();
 
+	StackAllocator st;
+	st.setStackSize(1024);
+
+	ExempleData* exStack1 = (ExempleData*)st.allocate(sizeof(ExempleData));
+	ExempleData* exStack2 = (ExempleData*)st.allocate(sizeof(ExempleData));
+	ExempleData* exStack3 = (ExempleData*)st.allocate(sizeof(ExempleData));
+	ExempleData* exStack4 = (ExempleData*)st.allocate(sizeof(ExempleData));
+	ExempleData* exStack5 = (ExempleData*)st.allocate(sizeof(ExempleData));
+	ExempleData* exStack6 = (ExempleData*)st.allocate(sizeof(ExempleData));
+	DataTest* 	 dtStack1 = (DataTest*)st.allocate(sizeof(DataTest));
+	ExempleData* exStack7 = (ExempleData*)st.allocate(sizeof(ExempleData));
+
+	exStack1->d = 99;
+	exStack2->d = 100;
+	exStack3->d = 101;
+	exStack4->d = 102;
+	exStack5->d = 103;
+	exStack6->d = 104;
+	exStack7->d = 105;
+	dtStack1->a = 255;
+
+	st.printStack();
+
+	st.pop();
+
+	st.printStack();
+	
+	st.pop();
+
+	st.printStack();
+	
 	return 0;
 }
