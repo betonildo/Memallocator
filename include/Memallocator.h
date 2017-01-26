@@ -82,34 +82,47 @@ public:
 
 	template<class T>
 	inline T** reallocate(T* structurePtr, size_t newStructureSize) {
-		return reinterpret_cast<T**>(reallocate(structurePtr, newStructureSize));
+		return reinterpret_cast<T**>(reallocateBytes((byte*)structurePtr, newStructureSize));
 	}
 
-	inline byte** reallocate(void* structurePtr, size_t newStructureSize) {
+	inline byte** reallocateBytes(byte* structurePtr, size_t newStructureSize) {
 		HeapBlockHeader* currBlockHeader = reinterpret_cast<HeapBlockHeader*>(structurePtr - sizeof(HeapBlockHeader));
-		HeapBlockHeader* nextBlockHeader = reinterpret_cast<HeapBlockHeader*>(structurePtr - heapBlockHeader->blockSize);
+		HeapBlockHeader* nextBlockHeader = reinterpret_cast<HeapBlockHeader*>(structurePtr - currBlockHeader->blockSize);
 
 		// TODO: find new ptrToPtrHeap
-		
+		byte** oldPtr = findBytePointerFromHeapPointer(structurePtr);
+		ASSERT(oldPtr != NULL, "Old ptr cannot be nullptr");
 		// simplified approach
 		// if the pointer points to the last heap allocated, just increment the size in bytes
-		if (nextFree <= (heapSpace - currBlockHeader)) {
-			nextFree += newStructureSize - currBlockHeader->blockSize;
+		if (nextFree <= reinterpret_cast<uintptr_t>(heapSpace) - reinterpret_cast<uintptr_t>(currBlockHeader)) {
+			nextFree += (newStructureSize - currBlockHeader->blockSize);
 			currBlockHeader->blockSize = newStructureSize;
+			return oldPtr;
 		}
 		// else, reserve new space at the end of the heap and copy bytes to there
-		else (nextBlockHeader->isBlockInUse == IN_USE) {
-			currBlockHeader->isBlockInUse = FREE;
+		else if (nextBlockHeader->isBlockInUse == IN_USE) {
+			currBlockHeader->isBlockInUse = FREE;			
 			byte** newPtr = allocate(newStructureSize);
 			memcpy(*newPtr, structurePtr, currBlockHeader->blockSize);
 			return newPtr;
+		}
+		else {
+			return oldPtr;
 		}
 
 		// TODO: try to allocate memory from free spaces if the allocated is in the middle
 		// else
 		// }
+	}
 
-		return structurePtr
+	inline byte** findBytePointerFromHeapPointer(byte* heapPtr) {
+		for(U64 i = 0; i <= ptrToSpaceCurrentIndex; i++) {
+			if (heapPtr == ptrToSpace[i]) {
+				return (byte**)&ptrToSpace[i];
+			}
+		}
+
+		return NULL;
 	}
 
 	template<class T>

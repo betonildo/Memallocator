@@ -167,5 +167,19 @@ int main(int argc, char** argv) {
 
 	st.printStack();
 	
+
+	U64** u64array = h.allocateArray<U64>(3);
+
+	h.printTilNext();
+
+
+	
+
+	U64** u64array2 = h.allocateArray<U64>(3);
+
+	u64array = h.reallocate<U64>(*u64array, sizeof(U64) * 5);
+
+	h.printTilNext();
+
 	return 0;
 }
