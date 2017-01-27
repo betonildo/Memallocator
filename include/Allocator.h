@@ -6,8 +6,8 @@
 class Allocator {
 
 public:
-    virtual byte** allocate(size_t count) = 0;
-    virtual void deallocate(void* address) = 0;
+    virtual byte** allocate(size_t count, bool useBlockNumber, U64 blockNumber) = 0;
+    virtual uintptr_t deallocate(void* address) = 0;
     virtual void defragment() = 0;
 };
 

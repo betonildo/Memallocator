@@ -4,6 +4,7 @@ byte* Memallocator::heapSpace = NULL;
 U64 Memallocator::nextFree = 0;
 byte** Memallocator::ptrToSpace = NULL;
 U64 Memallocator::ptrToSpaceCurrentIndex = 0;
+U64 Memallocator::blocksAllocatedCounter = 0;
 bool Memallocator::wasInitialized = false;
 
 Memallocator::Memallocator() {
@@ -86,6 +87,6 @@ void Memallocator::printTilNext() {
     printf("HEAP BLOCK:\n");   
     
     for(U64 i = 0; i < nextFree; i++) {
-        printf("Address: %p, %d = %d\n", &heapSpace[i], i, heapSpace[i]);
+        printf("Address: %p, %d = %u\n", &heapSpace[i], i, heapSpace[i]);
     }
 }
