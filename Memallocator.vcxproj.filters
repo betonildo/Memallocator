@@ -24,6 +24,9 @@
     <ClInclude Include="include\StackAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\PtrHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memallocator.cpp">
