@@ -1,14 +1,14 @@
 #ifndef TESTPTRHANDLE_H
 #define TESTPTRHANDLE_H
 
-#include <Memallocator.h>
+#include <PoolAllocator.h>
 #include <PtrHandle.h>
 
 struct Composite {
 	int a;
 };
 
-Memallocator g_mem;
+PoolAllocator g_mem;
 int g_counter = 0;
 
 void testAll();

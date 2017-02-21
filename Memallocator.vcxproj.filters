@@ -18,18 +18,33 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Memallocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\StackAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\PtrHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PoolAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Memallocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\memallocator_local_includes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\memallocator_local_definitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MemoryArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Memallocator.cpp">
+    <ClCompile Include="src\PoolAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -132,12 +132,17 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Allocator.h" />
     <ClInclude Include="include\Memallocator.h" />
+    <ClInclude Include="include\memallocator_local_definitions.h" />
+    <ClInclude Include="include\memallocator_local_includes.h" />
+    <ClInclude Include="include\MemoryArray.h" />
+    <ClInclude Include="include\PoolAllocator.h" />
     <ClInclude Include="include\PtrHandle.h" />
     <ClInclude Include="include\StackAllocator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Memallocator.cpp" />
+    <ClCompile Include="src\PoolAllocator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
