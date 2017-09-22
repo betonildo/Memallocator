@@ -5,7 +5,7 @@
 #include <PtrHandle.h>
 
 struct Composite {
-	int a;
+	char a;
 };
 
 PoolAllocator g_mem;
@@ -23,17 +23,17 @@ void testAll() {
 }
 
 void testEvadingTheScope() {
-
-	g_mem.printTilNext();
+	
 	{
 		PtrHandle<Composite> myHComp = copyCompositeHandle();
-		myHComp->a = g_counter++;
+		myHComp->a = ++g_counter;
+		g_mem.printTilNext();
 	}
-	g_mem.printTilNext();
-
+	g_mem.defragment();
 	{
-		PtrHandle<Composite> myHComp = g_mem.allocateWithHandle<Composite>();
-		myHComp->a = g_counter++;
+		PtrHandle<Composite> myHComp = copyCompositeHandle();
+		myHComp->a = ++g_counter;
+		g_mem.printTilNext();
 	}
 	g_mem.printTilNext();
 }
@@ -45,8 +45,6 @@ void testCopyingHandle() {
 PtrHandle<Composite> copyCompositeHandle() {
 
 	PtrHandle<Composite> hComp = g_mem.allocateWithHandle<Composite>();
-	hComp->a = g_counter++;
-	g_mem.printTilNext();
 	return hComp;
 }
 

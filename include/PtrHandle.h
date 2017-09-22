@@ -22,12 +22,8 @@ public:
 	inline PtrHandle(const PtrHandle<T>& other) {		
 		m_refCounter = other.m_refCounter;
 		m_ptrPtr = other.m_ptrPtr;
-		m_MemRescuer = other.m_MemRescuer;		
-		// other.m_refCounter += 1;
-
-
-		PtrHandle<T>& otherTemp = (PtrHandle<T>&)other;
-		otherTemp.m_refCounter += 1;
+		m_MemRescuer = other.m_MemRescuer;
+		((PtrHandle<T>&)other).m_refCounter += 1;
 	}
 
 	inline ~PtrHandle() {

@@ -9,25 +9,25 @@ struct Vector {
 
 typedef Vector<float> Vectorf;
 typedef Vector<int> Vectori;
+typedef Vector<unsigned char> Vectorc;
 
 int main(int argc, char** argv) {
 
-	//testAll();
+	testAll();
 	
-	PoolAllocator pool;
+	// PoolAllocator pool;
 
-	PtrHandle<int> phi = pool.allocateWithHandle<int>();
-	phi.get() = 255;
-	*phi = 123;
-	pool.printTilNext();
+	// PtrHandle<int> phi = pool.allocateWithHandle<int>();
+	// phi.get() = 255;
+	// *phi = 123;
+	// pool.printTilNext();
 
-	auto fixedArray = pool.allocateArray<Vectori, 10>();
+	// auto fixedArray = pool.allocateArray<Vectorc, 10>();
 
-	fixedArray[0] = { 255, 255, 255 };
-	fixedArray[1] = { 255, 255, 255 };
+	// fixedArray[0] = { 255, 255, 255 };
+	// fixedArray[1] = { 255, 255, 255 };
 
-
-	pool.printTilNext();
+	// pool.printTilNext();
 
 	std::cin.get();
 
