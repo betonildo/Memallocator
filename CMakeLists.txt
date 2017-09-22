@@ -12,8 +12,9 @@ file(GLOB_RECURSE SOURCES_CPP "src/*.cpp")
 file(GLOB_RECURSE TEST_SOURCES_CPP "test/*.cpp")
 
 
-add_library(Memallocator ${SOURCES_CPP})
+add_library(Memallocator STATIC "${SOURCES_CPP}")
 
-add_executable(TestMemallocator ${TEST_SOURCES_CPP})
 include_directories("${PROJECT_SOURCE_DIR}/test")
-target_link_libraries(Memallocator)
+link_directories("${CMAKE_SOURCE_DIR}")
+add_executable(TestMemallocator "${TEST_SOURCES_CPP}")
+target_link_libraries(TestMemallocator Memallocator)
