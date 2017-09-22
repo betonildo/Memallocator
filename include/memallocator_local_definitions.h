@@ -6,13 +6,14 @@
 #ifndef _UIM_
 #define _UIM_
 
-#ifdef WIN32
-typedef uint_fast32_t UIM;
-#endif
+    #ifdef WIN32
+        typedef uint_fast32_t UIM;
+    #elif WIN64
+        typedef uint_fast64_t UIM;
+    #else
+        typedef uint32_t UIM;
+    #endif
 
-#ifdef WIN64
-typedef uint_fast64_t UIM;
-#endif
 
 #endif
 

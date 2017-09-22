@@ -27,13 +27,13 @@ void testEvadingTheScope() {
 	g_mem.printTilNext();
 	{
 		PtrHandle<Composite> myHComp = copyCompositeHandle();
-		myHComp.get().a = g_counter++;
+		myHComp->a = g_counter++;
 	}
 	g_mem.printTilNext();
 
 	{
 		PtrHandle<Composite> myHComp = g_mem.allocateWithHandle<Composite>();
-		myHComp.get().a = g_counter++;
+		myHComp->a = g_counter++;
 	}
 	g_mem.printTilNext();
 }
@@ -45,7 +45,7 @@ void testCopyingHandle() {
 PtrHandle<Composite> copyCompositeHandle() {
 
 	PtrHandle<Composite> hComp = g_mem.allocateWithHandle<Composite>();
-	hComp.get().a = g_counter++;
+	hComp->a = g_counter++;
 	g_mem.printTilNext();
 	return hComp;
 }

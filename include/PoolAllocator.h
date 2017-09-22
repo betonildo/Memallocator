@@ -42,13 +42,17 @@ public:
 	template<class T>
 	PtrHandle<T> allocateWithHandle() {
 		T** allocatedPtr = allocate<T>();
-		return PtrHandle<T>(allocatedPtr, this);
+		return PtrHandle<T>(allocatedPtr, [=](T** memPtr){
+			this->deallocate(*memPtr);
+		});
 	}
 	
 	template<class T, size_t size>
 	inline MemoryArray<T, size> allocateArray() {
 		T** ptr = allocateArray<T>(size);
-		PtrHandle<T> ptrHandle(ptr, this);
+		PtrHandle<T> ptrHandle(ptr, [=](T** memPtr){
+			this->deallocate(*memPtr);
+		});
 		MemoryArray<T, size> memarray(ptrHandle);
 		return memarray;
 	}

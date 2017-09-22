@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
 	pool.printTilNext();
 
-	std::cin >> string();
+	std::cin.get();
 
 	return 0;
 }

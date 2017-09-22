@@ -1,43 +1,44 @@
 #ifndef PTRHANDLE_H
 #define PTRHANDLE_H
 
-class PoolAllocator;
-#include <PoolAllocator.h>
+#include <functional>
 
 template<class T>
 class PtrHandle {
 
 private:
 	unsigned int m_refCounter;
-	PoolAllocator* m_memRef;
+	std::function<void(T** memPtr)> m_MemRescuer;
 	T** m_ptrPtr;
 
 public:
 
-	inline PtrHandle(T** ptr, PoolAllocator* mem) {
-		m_memRef = mem;
+	inline PtrHandle(T** ptr, std::function<void(T** memPtr)> rescuer) {
+		m_MemRescuer = rescuer;
 		m_refCounter = 1;
 		m_ptrPtr = ptr;
 	}
 
-	inline PtrHandle(PtrHandle& other) {		
+	inline PtrHandle(const PtrHandle<T>& other) {		
 		m_refCounter = other.m_refCounter;
 		m_ptrPtr = other.m_ptrPtr;
+		m_MemRescuer = other.m_MemRescuer;		
+		// other.m_refCounter += 1;
 
-		m_memRef = other.m_memRef;
-		other.m_refCounter += 1;
+
+		PtrHandle<T>& otherTemp = (PtrHandle<T>&)other;
+		otherTemp.m_refCounter += 1;
 	}
 
 	inline ~PtrHandle() {
 
 		m_refCounter--;
 		if (m_refCounter == 0)
-			m_memRef->deallocate(*m_ptrPtr);
+			m_MemRescuer(m_ptrPtr);
 	}
 
-	inline PtrHandle& operator=(const PtrHandle& other) {
-		*this(other);		
-		return *this;
+	inline T* operator->() {
+		return m_ptrPtr[0];
 	}
 
 	inline T& operator*() {
