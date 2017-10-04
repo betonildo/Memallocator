@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 	*phi = 123;
 	pool.printTilNext();
 
-	auto fixedArray = pool.allocateArray<Vectorc, 10>();
+	auto fixedArray = pool.allocateArray<Vector, 10>();
 
 	fixedArray[0] = {255, 255, 255};
 	fixedArray[1] = {255, 255, 255};
