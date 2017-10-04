@@ -22,6 +22,10 @@ void testAll() {
 	testCopyingHandle();
 }
 
+struct Vector {
+	float x,y,z;
+};
+
 void testEvadingTheScope() {
 	
 	{
@@ -35,6 +39,12 @@ void testEvadingTheScope() {
 		myHComp->a = ++g_counter;
 		g_mem.printTilNext();
 	}
+	g_mem.printTilNext();
+
+	PtrHandle<Vector> pVec = g_mem.allocateWithHandle<Vector>();
+
+	pVec->x = 123;
+
 	g_mem.printTilNext();
 }
 

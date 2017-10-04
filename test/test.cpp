@@ -2,14 +2,6 @@
 #include <string>
 #include "TestPtrHandle.h"
 
-template<typename T>
-struct Vector {
-	T x, y, z;
-};
-
-typedef Vector<float> Vectorf;
-typedef Vector<int> Vectori;
-typedef Vector<unsigned char> Vectorc;
 
 int main(int argc, char** argv) {
 
