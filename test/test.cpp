@@ -4,22 +4,20 @@
 
 
 int main(int argc, char** argv) {
+		
+	PoolAllocator pool;
 
-	testAll();
-	
-	// PoolAllocator pool;
+	PtrHandle<int> phi = pool.allocateWithHandle<int>();
+	phi.get() = 255;
+	*phi = 123;
+	pool.printTilNext();
 
-	// PtrHandle<int> phi = pool.allocateWithHandle<int>();
-	// phi.get() = 255;
-	// *phi = 123;
-	// pool.printTilNext();
+	auto fixedArray = pool.allocateArray<Vectorc, 10>();
 
-	// auto fixedArray = pool.allocateArray<Vectorc, 10>();
+	fixedArray[0] = {255, 255, 255};
+	fixedArray[1] = {255, 255, 255};
 
-	// fixedArray[0] = { 255, 255, 255 };
-	// fixedArray[1] = { 255, 255, 255 };
-
-	// pool.printTilNext();
+	pool.printTilNext();
 
 	std::cin.get();
 
