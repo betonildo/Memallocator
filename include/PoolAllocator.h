@@ -1,102 +1,91 @@
 #ifndef POOLALLOCATOR_H
 #define POOLALLOCATOR_H
 
-#include <PtrHandle.h>
-#include <MemoryArray.h>
-#include <memallocator_local_includes.h>
-#include <memallocator_local_definitions.h>
-
-/* TODO: Use the last bit to represent is the block is occupied or not
-#define MINUS_SIGN 0x80000000
-#define ALL_BUT_ONE 0x7fffffff
-*/
-using namespace std;
-
-/*
-NOTE: 	OFFSETs need a replacement on different ENDIANNESS for differents CPU. This is made for Intel only that is currently Little Endian.
-		The sign need to change to '+' on Big Endian architectures
-*/
+#include <vector>
+#include <memory>
+#include <assert.h>
 
 class PoolAllocator {
-	
-private:
-
-	struct HeapBlockHeader {
-		unsigned short blockNumber;
-		unsigned short isBlockInUse;
-		UIM blockSize;
-	};
-	byte* heapSpace;
-	UIM nextFree;
-
-	byte** ptrToSpace;
-	UIM ptrToSpaceCurrentIndex;
-
-	UIM blocksAllocatedCounter;
 
 public:
+    explicit PoolAllocator(size_t poolsize) {
+        mPoolIndex = 0;
+        mPoolsize = poolsize;
+        mPool = new byte[mPoolsize];
+        mFree_list.reserve(mPoolsize);
+    }
 
-	PoolAllocator();
-	PoolAllocator(UIM min, UIM Max);
+    explicit PoolAllocator(const PoolAllocator& other) = default;
 
-	template<class T>
-	PtrHandle<T> allocateWithHandle() {
-		T** allocatedPtr = allocate<T>();
-		return PtrHandle<T>(allocatedPtr, [=](T** memPtr){
-			this->deallocate(*memPtr);
-		});
-	}
-	
-	template<class T, size_t size>
-	inline MemoryArray<T, size> allocateArray() {
-		T** ptr = allocateArray<T>(size);
-		PtrHandle<T> ptrHandle(ptr, [=](T** memPtr){
-			this->deallocate(*memPtr);
-		});
-		MemoryArray<T, size> memarray(ptrHandle);
-		return memarray;
-	}
+    ~PoolAllocator() {
+        delete mPool;
+        mFree_list.clear();
+    }
 
-	template<class T>
-	inline T** allocateArray(size_t count) {
-		return (T**)allocate(sizeof(T) * count, false, -1);
-	}
+    template<typename Type, typename... TypeArgs>
+    std::shared_ptr<Type> create(TypeArgs&&... args) {
+        // get pointer for byte correspondent and reinterpret it as the type used
+        byte* byte_array = this->allocate(sizeof(Type));
+        Type* object_ptr = reinterpret_cast<Type*>(byte_array);
 
-	template<class T>
-	inline T** allocate() {
+        // call object constructor
+        construct(object_ptr, std::forward<TypeArgs>(args)...);
 
-		// set size and next free space and
-		return (T**)allocate(sizeof(T), false, -1);
-	}
+        // custom deleter of this shared_ptr
+        auto custom_deleter = std::bind(&PoolAllocator::free_pool_space<Type>, this, object_ptr);
+        return std::shared_ptr<Type>(object_ptr, custom_deleter);
+    }
 
-	byte** allocate(size_t structureSize, bool useBlockNumber, UIM blockNumber);
+private:
+    typedef unsigned char byte;
+    typedef std::pair<unsigned int, size_t> IndexSize;
+    
+    std::vector<IndexSize> mFree_list;
+    unsigned int mPoolIndex;
+    size_t mPoolsize;
+    byte* mPool;
 
-	inline byte** setPointerToSpaceAndReturnTypeCasted(UIM& indexOfFreeAddress) {
-		ptrToSpace[ptrToSpaceCurrentIndex] = &heapSpace[indexOfFreeAddress];
-		return &ptrToSpace[ptrToSpaceCurrentIndex++];
-	}
+    byte* allocate(size_t size) {
 
-	template<class T>
-	inline T** reallocate(T** structurePtr, size_t newStructureSize) {
-		return reinterpret_cast<T**>(reallocateBytes((byte**)structurePtr, newStructureSize));
-	}
+        // search first on free list
+        size_t free_list_size = mFree_list.size();
+        for (unsigned int free_object_index = 0; free_object_index < free_list_size; free_object_index++) {
+            auto& free_object = mFree_list[free_object_index];
+            if (size == free_object.second) {
+                // remove free list entry (PERFORMANCE CRITICAL?)
+                mFree_list.erase(mFree_list.begin() + free_object_index);
+                return &mPool[free_object.first];
+            }
+        }
 
-	byte** reallocateBytes(byte** structurePtr, size_t newStructureSize);
-	
-	template<class T>
-	inline void deallocate(T* block) {		
-		HeapBlockHeader* headerOfBlock = (HeapBlockHeader*)((byte*)block - sizeof(HeapBlockHeader));
-		headerOfBlock->isBlockInUse = FREE;
-	}
-	
-	inline void replaceMemoryPointersStartingAtDowning(byte* physicAddress, byte blockSize) {
-		for(UIM i = 0; i <= ptrToSpaceCurrentIndex; i++)
-			if (ptrToSpace[i] >= physicAddress) ptrToSpace[i] -= blockSize;
-	}
-	
-	// NOT THREAD SAFE
-	virtual void defragment();
-	void printTilNext();
+        // pool allocation exceeds
+        assert(mPoolIndex < mPoolsize);
+        
+        // get next byte address, pass to the next byte and return the address from pool
+        byte* byte_address = &mPool[mPoolIndex];
+        mPoolIndex += size;
+        return byte_address;
+    }
+
+    template<typename Type>
+    void free_pool_space(Type* object_ptr) {
+        // get addresses to free
+        uintptr_t pool_address = reinterpret_cast<uintptr_t>(mPool) >> 2; // divide by 4, because it is 4 byte based address
+        uintptr_t byte_address = reinterpret_cast<uintptr_t>(object_ptr) >> 2; // divide by 4, because it is 4 byte based address
+        
+        // TODO: Need to treat platform endianess (MAYBE?)
+        uintptr_t free_index = abs(byte_address - pool_address);
+        mFree_list.emplace_back(free_index, sizeof(Type));
+
+        // call destructor
+        object_ptr->~Type();
+    }
+
+    // ugly constructor call syntax
+    template<typename Type, typename... TypeArgs>
+    void construct(Type* object_ptr, TypeArgs&&... args) {
+        ::new((void*)object_ptr) Type(std::forward<TypeArgs>(args)...);
+    }
 };
 
 #endif /*POOLALLOCATOR_H*/

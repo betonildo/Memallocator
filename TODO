@@ -1,5 +1,7 @@
+- Implement defragmentation in iterations
+
 - Change Pool allocator to use an auxiliar array to take description of memory blocks
-    - This will really use contiguous memory space
+    - This will really use contiguous memory space - DONE using a free list
 
 - Transform a PtrHandle to handle a single pointer and change
     2 levels of indirection to 1. The problem with one layer of 
