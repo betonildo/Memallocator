@@ -10,16 +10,16 @@ class PoolAllocator {
 public:
     explicit PoolAllocator(size_t poolsize) {
         mPoolIndex = 0;
-        mPoolsize = poolsize;
-        mPool = new byte[mPoolsize];
-        mFree_list.reserve(mPoolsize);
+        mPoolSize = poolsize;
+        mPool = new byte[mPoolSize];
+        mFreeList.reserve(mPoolSize);
     }
 
     explicit PoolAllocator(const PoolAllocator& other) = default;
 
     ~PoolAllocator() {
         delete mPool;
-        mFree_list.clear();
+        mFreeList.clear();
     }
 
     template<typename Type, typename... TypeArgs>
@@ -40,26 +40,26 @@ private:
     typedef unsigned char byte;
     typedef std::pair<unsigned int, size_t> IndexSize;
     
-    std::vector<IndexSize> mFree_list;
+    std::vector<IndexSize> mFreeList;
     unsigned int mPoolIndex;
-    size_t mPoolsize;
+    size_t mPoolSize;
     byte* mPool;
 
     byte* allocate(size_t size) {
 
         // search first on free list
-        size_t free_list_size = mFree_list.size();
+        size_t free_list_size = mFreeList.size();
         for (unsigned int free_object_index = 0; free_object_index < free_list_size; free_object_index++) {
-            auto& free_object = mFree_list[free_object_index];
+            auto& free_object = mFreeList[free_object_index];
             if (size == free_object.second) {
                 // remove free list entry (PERFORMANCE CRITICAL?)
-                mFree_list.erase(mFree_list.begin() + free_object_index);
+                mFreeList.erase(mFreeList.begin() + free_object_index);
                 return &mPool[free_object.first];
             }
         }
 
         // pool allocation exceeds
-        assert(mPoolIndex < mPoolsize);
+        assert(mPoolIndex < mPoolSize);
         
         // get next byte address, pass to the next byte and return the address from pool
         byte* byte_address = &mPool[mPoolIndex];
@@ -75,7 +75,7 @@ private:
         
         // TODO: Need to treat platform endianess (MAYBE?)
         uintptr_t free_index = abs(byte_address - pool_address);
-        mFree_list.emplace_back(free_index, sizeof(Type));
+        mFreeList.emplace_back(free_index, sizeof(Type));
 
         // call destructor
         object_ptr->~Type();
